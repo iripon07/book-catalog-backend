@@ -1,8 +1,15 @@
-import express from "express";
-const app = express();
-const port = 3000;
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+const app: Application = express();
 
-app.get("/", (req, res) => {
+//cors
+app.use(cors());
+
+//Parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req: Request, res: Response) => {
   res.send(`Book Catalog website is running successfully`);
 });
 
