@@ -12,7 +12,7 @@ const bookSchema = new Schema<IBook>(
       required: true,
     },
     publishingDate: {
-      type: String,
+      type: Date,
       required: true,
     },
     genre: {
@@ -27,6 +27,8 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
     },
+    ratings: [{ type: Number }],
+    reviews: [{ type: String }],
     price: {
       type: Number,
       required: true,
