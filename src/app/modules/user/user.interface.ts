@@ -8,4 +8,10 @@ export type IUser = {
   address: string;
 };
 
-export type UserModel = Model<IUser, Record<string, never>>;
+export type UserModel = {
+  isUserExist(phoneNumber: string): Promise<Partial<IUser | null>>;
+  isPasswordMatched(
+    givenPassword: string,
+    savedPassword: string,
+  ): Promise<boolean>;
+} & Model<IUser>;

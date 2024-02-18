@@ -1,22 +1,36 @@
 import { Request, Response } from 'express';
-import { AuthServices } from './auth.service';
+import httpStatus from 'http-status';
+import catchAsync from '../../../Shared/catchAsync';
+import sendResponse from '../../../Shared/sendResponse';
+import { IUser } from '../user/user.interface';
+import { ILoginUserResponse } from './auth.interface';
+import { AuthService } from './auth.service';
 
 const createUser = async (req: Request, res: Response) => {
-  try {
-    const body = req.body;
-    const result = await AuthServices.createUser(body);
-    res.status(200).json({
-      success: true,
-      message: 'User created successfully',
-      data: result,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'Failed',
-    });
-  }
+  const body = req.body;
+  const result = await AuthService.createUser(body);
+  sendResponse<IUser>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User created successfully',
+    data: result,
+  });
 };
+
+const loginUser = catchAsync(async (req, res) => {
+  const loginData = req.body;
+
+  const result = await AuthService.loginUser(loginData);
+
+  sendResponse<ILoginUserResponse>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User logged in successfully',
+    data: result,
+  });
+});
+
 export const AuthController = {
   createUser,
+  loginUser,
 };
