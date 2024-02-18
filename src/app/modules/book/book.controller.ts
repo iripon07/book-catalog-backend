@@ -3,8 +3,8 @@ import { BookService } from './book.service';
 
 const createBook = async (req: Request, res: Response) => {
   try {
-    const book = req.body;
-    const result = await BookService.createBook(book);
+    const { ...bookData } = req.body;
+    const result = await BookService.createBook(bookData);
     res.status(200).json({
       success: true,
       message: 'Book created successfully',
