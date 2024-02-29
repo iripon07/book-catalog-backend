@@ -12,7 +12,7 @@ const createUser = async (
 ): Promise<{ result: IUser | null; token: string }> => {
   const user = payload;
   const isEmailUsed = await User.findOne({ email: user?.email });
-  if (!isEmailUsed) {
+  if (isEmailUsed) {
     throw new ApiError(httpStatus.CONFLICT, 'Email already used');
   }
   const createdUser = await User.create(user);

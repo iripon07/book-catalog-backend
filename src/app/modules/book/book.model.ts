@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { BookModel, IBook } from './book.interface';
+import { BookModel, IBook, bookGenre } from './book.interface';
 
 const bookSchema = new Schema<IBook>(
   {
@@ -11,17 +11,18 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
     },
-    publishingDate: {
-      type: Date,
+    publicationDate: {
+      type: String,
       required: true,
     },
     createdBy: {
-      type: Schema.Types.ObjectId, // User --> _id
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
     genre: {
       type: String,
+      enum: bookGenre,
       required: true,
     },
     description: {
@@ -32,15 +33,8 @@ const bookSchema = new Schema<IBook>(
       type: String,
       required: true,
     },
-    ratings: [{ type: Number }],
-    reviews: [{ type: String }],
-    price: {
-      type: Number,
-      required: true,
-    },
-    availableQuantity: {
-      type: Number,
-      required: true,
+    reviews: {
+      type: [{ rating: Number, comment: String }],
     },
   },
   {

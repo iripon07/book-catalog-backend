@@ -1,5 +1,7 @@
+import httpStatus from 'http-status';
 import { SortOrder } from 'mongoose';
 import { paginationHelper } from '../../../Helper/paginationHelper';
+import ApiError from '../../../errors/ApiError';
 import { IGenericResponse } from '../../../interface/common';
 import { IPaginationOptions } from '../../../interface/pagination';
 import { bookFilterableFields } from './book.constant';
@@ -7,7 +9,10 @@ import { IBook, IBookFilters } from './book.interface';
 import { Book } from './book.model';
 
 const createBook = async (book: IBook): Promise<IBook | null> => {
-  const result = await Book.create(book);
+  const result = (await Book.create(book)).populate('createdBy');
+  if (!result) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Book not created');
+  }
   return result;
 };
 
@@ -65,6 +70,21 @@ const getSingleBook = async (payload: string): Promise<IBook | null> => {
   return result;
 };
 
+const updateBook = async (
+  id: string,
+  payload: Partial<IBook>,
+): Promise<IBook | null> => {
+  const isBookExist = await Book.findOne({ _id: id });
+  if (!isBookExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Book not found');
+  }
+  const result = await Book.findByIdAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+
+  return result;
+};
+
 const deleteBook = async (payload: string): Promise<IBook | null> => {
   const _id = payload;
   const result = await Book.findByIdAndDelete(_id);
@@ -76,4 +96,5 @@ export const BookService = {
   getAllBooks,
   getSingleBook,
   deleteBook,
+  updateBook,
 };
