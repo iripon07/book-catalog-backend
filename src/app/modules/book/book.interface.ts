@@ -4,6 +4,7 @@ export type IBook = {
   title: string;
   author: string;
   publishingDate: Date;
+  createdBy: Types.ObjectId | IUser;
   genre: string;
   description: string;
   coverImage: string;
@@ -14,4 +15,12 @@ export type IBook = {
   addedBy?: Types.ObjectId | IUser;
 };
 
-export type BookModel = Model<IBook>;
+export type BookModel = Model<IBook, Record<string, unknown>>;
+
+export type IBookFilters = {
+  searchTerm?: string;
+  genre?: string;
+  publicationYear?: string;
+  title?: string;
+  author?: string;
+};

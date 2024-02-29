@@ -15,6 +15,11 @@ const bookSchema = new Schema<IBook>(
       type: Date,
       required: true,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId, // User --> _id
+      ref: 'User',
+      required: true,
+    },
     genre: {
       type: String,
       required: true,
