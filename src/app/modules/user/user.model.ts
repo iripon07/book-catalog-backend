@@ -36,14 +36,19 @@ const userSchema = new Schema<IUser>(
   },
 );
 
+// create static method
 userSchema.statics.isUserExist = async function (
   email: string,
-): Promise<Pick<IUser, 'email' | 'password' | 'role'>> {
-  const user = await User.findOne(
-    { email },
-    { email: 1, password: 1, role: 1 },
+): Promise<Pick<IUser, 'email' | '_id' | 'password' | 'role'> | null> {
+  return await User.findOne(
+    { email: email },
+    {
+      email: 1,
+      _id: 1,
+      password: 1,
+      role: 1,
+    },
   );
-  return user as Pick<IUser, 'email' | 'password' | 'role'>;
 };
 
 userSchema.statics.isPasswordMatched = async function (
@@ -60,7 +65,6 @@ userSchema.pre('save', async function (next) {
     user.password,
     Number(config.bcrypt_salt_rounds),
   );
-
   next();
 });
 

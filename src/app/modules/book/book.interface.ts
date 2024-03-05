@@ -1,4 +1,5 @@
 import { Model, Types } from 'mongoose';
+import { IUser } from '../user/user.interface';
 export type Genre =
   | 'Fiction'
   | 'Non-fiction'
@@ -31,11 +32,11 @@ export type IBook = {
   title: string;
   author: string;
   publicationDate: string;
-  createdBy: Types.ObjectId;
+  reviews: IBookReview[];
+  createdBy: Types.ObjectId | IUser;
   genre: Genre;
   description: string;
   coverImage: string;
-  reviews: IBookReview[];
 };
 
 export type BookModel = Model<IBook, Record<string, unknown>>;

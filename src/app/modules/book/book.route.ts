@@ -12,6 +12,11 @@ router.patch(
   validateRequest(BookValidation.updateBookZodSchema),
   BookController.updateBook,
 );
+router.patch(
+  '/review/:id',
+  validateRequest(BookValidation.updateBookZodSchema),
+  BookController.updateBook,
+);
 router.delete('/:id', BookController.deleteBook);
 
 export const BookRoutes = router;

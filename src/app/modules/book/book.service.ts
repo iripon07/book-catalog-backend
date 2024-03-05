@@ -5,7 +5,7 @@ import ApiError from '../../../errors/ApiError';
 import { IGenericResponse } from '../../../interface/common';
 import { IPaginationOptions } from '../../../interface/pagination';
 import { bookFilterableFields } from './book.constant';
-import { IBook, IBookFilters } from './book.interface';
+import { IBook, IBookFilters, IBookReview } from './book.interface';
 import { Book } from './book.model';
 
 const createBook = async (book: IBook): Promise<IBook | null> => {
@@ -91,10 +91,34 @@ const deleteBook = async (payload: string): Promise<IBook | null> => {
   return result;
 };
 
+const reviewBook = async (
+  id: string,
+  payload: Partial<IBookReview>,
+): Promise<IBook | null> => {
+  const isBookExist = await Book.findOne({ _id: id });
+  if (!isBookExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Book not found');
+  }
+  const review = {
+    rating: payload.rating,
+    comment: payload.comment,
+  };
+  const result = await Book.findByIdAndUpdate(
+    { _id: id },
+    { $push: { reviews: review } },
+    {
+      new: true,
+    },
+  );
+
+  return result;
+};
+
 export const BookService = {
   createBook,
   getAllBooks,
   getSingleBook,
   deleteBook,
   updateBook,
+  reviewBook,
 };

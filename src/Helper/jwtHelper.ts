@@ -4,11 +4,10 @@ import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 const createToken = (
   payload: object,
   secret: Secret,
-  expireTime: string,
+  expired: object,
 ): string => {
-  return jwt.sign(payload, secret, {
-    expiresIn: expireTime,
-  });
+  const token = jwt.sign(payload, secret, expired);
+  return token;
 };
 
 const verifyToken = (token: string, secret: Secret): JwtPayload => {
@@ -16,6 +15,11 @@ const verifyToken = (token: string, secret: Secret): JwtPayload => {
 };
 
 export const jwtHelpers = {
+  createToken,
+  verifyToken,
+};
+
+export const jwtHelper = {
   createToken,
   verifyToken,
 };
