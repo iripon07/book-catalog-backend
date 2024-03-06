@@ -8,8 +8,8 @@ import { bookFilterableFields } from './book.constant';
 import { IBook, IBookFilters, IBookReview } from './book.interface';
 import { Book } from './book.model';
 
-const createBook = async (book: IBook): Promise<IBook | null> => {
-  const result = (await Book.create(book)).populate('createdBy');
+const createBook = async (payload: IBook): Promise<IBook | null> => {
+  const result = (await Book.create(payload)).populate('createdBy');
   if (!result) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Book not created');
   }

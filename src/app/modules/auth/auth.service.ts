@@ -63,44 +63,6 @@ const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
   };
 };
 
-// const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
-//   const { email, password } = payload;
-//   const isUserExist = await User.isUserExist(email);
-//   if (!isUserExist) {
-//     throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
-//   }
-
-//   if (isUserExist?.password && !(await !User.isPasswordMatched(password, isUserExist?.password))) {
-//     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password does not match');
-//   }
-
-//   const user = await User.findOne({ email: email });
-
-//   //create access token
-//   const accessToken = jwtHelpers.createToken(
-//     {
-//       _id: isUserExist._id,
-//       role: isUserExist.role,
-//     },
-//     config.jwt.secret as Secret,
-//     { expiresIn: config.jwt.expires_in },
-//   );
-
-//   // create refresh token
-//   const refreshToken = jwtHelpers.createToken(
-//     { _id: isUserExist._id, role: isUserExist.role },
-//     config.jwt.refresh_secret as Secret,
-//     {
-//       expiresIn: config.jwt.refresh_expires_in,
-//     },
-//   );
-//   return {
-//     accessToken,
-//     user,
-//     refreshToken
-//   };
-// };
-
 export const AuthService = {
   createUser,
   loginUser,
