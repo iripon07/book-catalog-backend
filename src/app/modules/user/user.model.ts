@@ -2,7 +2,6 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../../config';
-import { userRole } from './user.constant';
 import { IUser, UserModel } from './user.interface';
 
 const userSchema = new Schema<IUser>(
@@ -21,11 +20,6 @@ const userSchema = new Schema<IUser>(
       required: true,
       unique: true,
     },
-    role: {
-      type: String,
-      required: true,
-      enum: userRole,
-    },
     address: {
       type: String,
       required: true,
@@ -39,14 +33,12 @@ const userSchema = new Schema<IUser>(
 // create static method
 userSchema.statics.isUserExist = async function (
   email: string,
-): Promise<Pick<IUser, 'email' | '_id' | 'password' | 'role'> | null> {
+): Promise<Pick<IUser, 'email' | 'password'> | null> {
   return await User.findOne(
     { email: email },
     {
       email: 1,
-      _id: 1,
       password: 1,
-      role: 1,
     },
   );
 };

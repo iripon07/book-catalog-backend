@@ -7,17 +7,25 @@ import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import { ILogin, ILoginResponse } from './auth.interface';
 
-const createUser = async (user: IUser): Promise<Partial<IUser | null>> => {
-  if (user) {
-    user.role = 'user';
+const createUser = async (
+  user: IUser,
+): Promise<{ result: IUser | null; token: string }> => {
+  const isEmailExist = await User.findOne({ email: user.email });
+  if (isEmailExist) {
+    throw new ApiError(httpStatus.CONFLICT, 'This email is already exist');
   }
-  const result = await User.create(user);
-  if (result) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...dataWithoutPassword } = result.toJSON();
-    return dataWithoutPassword;
+
+  const createdUser = await User.create(user);
+  if (!createdUser) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `User not created`);
   }
-  return null;
+  const result = await User.findById(createdUser._id);
+  const token = jwtHelpers.createToken(
+    { email: result?.email },
+    config.jwt.secret as Secret,
+    config.jwt.expires_in as string,
+  );
+  return { result, token };
 };
 
 const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
@@ -32,34 +40,20 @@ const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
     isUserExist.password &&
     !(await User.isPasswordMatched(password, isUserExist?.password))
   ) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Password not match');
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password not match');
   }
 
-  const user = await User.findOne({ email: email });
+  const { email: userEmail } = isUserExist;
 
   // create access token
-  const accessToken = jwtHelpers.createToken(
-    {
-      _id: isUserExist._id,
-      role: isUserExist.role,
-    },
+  const token = jwtHelpers.createToken(
+    { email: userEmail },
     config.jwt.secret as Secret,
-    { expiresIn: config.jwt.expires_in },
-  );
-
-  // create refresh token
-  const refreshToken = jwtHelpers.createToken(
-    { _id: isUserExist._id, role: isUserExist.role },
-    config.jwt.refresh_secret as Secret,
-    {
-      expiresIn: config.jwt.refresh_expires_in,
-    },
+    config.jwt.expires_in as string,
   );
 
   return {
-    accessToken,
-    user: user,
-    refreshToken,
+    token,
   };
 };
 
