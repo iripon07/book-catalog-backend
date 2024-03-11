@@ -11,10 +11,7 @@ import { BookService } from './book.service';
 const createBook = catchAsync(async (req: Request, res: Response) => {
   const book = req.body;
   const user = req.user;
-
-  console.log(book, 'Book check');
-  console.log(user, 'User check');
-  const result = await BookService.createBook(book);
+  const result = await BookService.createBook(book, user);
   sendResponse<IBook>(res, {
     statusCode: httpStatus.OK,
     success: true,

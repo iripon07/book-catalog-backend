@@ -1,14 +1,24 @@
 import httpStatus from 'http-status';
+import { JwtPayload } from 'jsonwebtoken';
 import { SortOrder } from 'mongoose';
 import { paginationHelper } from '../../../Helper/paginationHelper';
 import ApiError from '../../../errors/ApiError';
 import { IGenericResponse } from '../../../interface/common';
 import { IPaginationOptions } from '../../../interface/pagination';
+import { User } from '../user/user.model';
 import { bookFilterableFields } from './book.constant';
 import { IBook, IBookFilters, IBookReview } from './book.interface';
 import { Book } from './book.model';
 
-const createBook = async (payload: IBook): Promise<IBook | null> => {
+const createBook = async (
+  payload: IBook,
+  userInfo: JwtPayload | null,
+): Promise<IBook | null> => {
+  const isUserExist = await User.findOne({ email: userInfo?.email });
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, `User not exist`);
+  }
+  payload.createdBy = isUserExist?._id;
   const result = (await Book.create(payload)).populate('createdBy');
   if (!result) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Book not created');
