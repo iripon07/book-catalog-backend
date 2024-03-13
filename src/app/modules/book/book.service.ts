@@ -83,7 +83,13 @@ const getSingleBook = async (payload: string): Promise<IBook | null> => {
 const updateBook = async (
   id: string,
   payload: Partial<IBook>,
+  userInfo: JwtPayload | null,
 ): Promise<IBook | null> => {
+  const user = await User.findOne({ email: userInfo?.email });
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, `User not found`);
+  }
+  console.log(payload, 'book info');
   const isBookExist = await Book.findOne({ _id: id });
   if (!isBookExist) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Book not found');
