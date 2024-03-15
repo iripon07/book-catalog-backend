@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import { Book } from '../book/book.model';
 import { User } from '../user/user.model';
-import { WishList } from './wishlist.model';
+import { WishList } from './wishList.model';
 
 const addToWishList = async (bookId: string, userId: string) => {
   const isBookExist = await Book.findOne({ _id: bookId });

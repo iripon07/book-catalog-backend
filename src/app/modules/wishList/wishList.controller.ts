@@ -4,6 +4,7 @@ import sendResponse from '../../../Shared/sendResponse';
 import { WishListService } from './wishList.service';
 
 const addToWishList = catchAsync(async (req, res) => {
+  console.log(req.body, `Book category`);
   const { bookId, userId } = req.body;
   const result = await WishListService.addToWishList(bookId, userId);
   sendResponse(res, {
